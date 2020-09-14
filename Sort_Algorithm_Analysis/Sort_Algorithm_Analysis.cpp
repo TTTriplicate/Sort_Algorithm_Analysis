@@ -24,7 +24,7 @@ int maxInt(std::vector<int> vector);
 
 void radixSort(std::vector<int>& vector);
 
-void countSort(std::vector<int>& vector, int place);
+std::vector<int> countSort(std::vector<int>& vector, int place);
 
 
 //You might want to remove the console ouput of all numbers in each list
@@ -109,34 +109,42 @@ int maxInt(std::vector<int> vector) {
     return max;
 }
 void radixSort(std::vector<int>& vector) {
+    /*Sorts a vector of integers by doing a count sort on each 
+    place(1, 10, etc) until there are no numbers with the significant figure*/
     int max = maxInt(vector);
     for (int place = 1; max / place > 0; place *= 10) {
-        countSort(vector, place);
+        vector = countSort(vector, place);
     }
+    //This sort runs log_10(max(n)) times
+    //each sub-section runs one full iteration across the vector
+    //resulting in time complexity of f(n) = log_10(max(n)) * n
+    //f(n) = c * n, or O(n) time complexity.
 }
 
-void countSort(std::vector<int>& vector, int place)
+std::vector<int> countSort(std::vector<int>& vector, int place)
 {
-    std::vector<int> output; // output array 
+    /*Sorts a vector of integers into ascending order by the value in a given place(1, 10, etc)
+    Uses a hashtable of value counts and an offset by preceding values to determine indicies of placement
+    integers with matching significant figures will retain original order*/
+    std::vector<int> output;
     output.resize(vector.size());
     int count[10] = { 0 };
 
-    // Store count of occurrences in count[] 
-    for (int i = 0; i < vector.size(); i++)
+    //uses count as a hashtable of counts of which digit(1, 2, ..., 9) is in the nth place(1, 10, etc)
+    for (int i = 0; i < vector.size(); i++) {
         count[(vector.at(i) / place) % 10]++;
-
-    // Change count[i] so that count[i] now contains actual 
-    //  position of this digit in output[] 
-    for (int i = 1; i < 10; i++)
+    }
+    //each set will be inserted starting at the position dictated by counts of
+    //all numbers with smaller first digits
+    //the count vector is reused for this
+    for (int i = 1; i < 10; i++) {
         count[i] += count[i - 1];
-
-    // Build the output array 
-    for (int i = vector.size() - 1; i >= 0; i--)
-    {
+    }
+    //using the counts in conjunction with the correct place digit, rearrange the values in vector
+    //into the correct order in output
+    for (int i = vector.size() - 1; i >= 0; i--){
         output.at(count[(vector.at(i) / place) % 10] - 1) = vector.at(i);
         count[(vector.at(i) / place) % 10]--;
     }
-    vector.clear();
-    for (int i : output)
-        vector.push_back(i);
+    return output;
 }
