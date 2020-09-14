@@ -20,6 +20,13 @@ void bubbleSort(int* array, int size);
 
 void generateRandomNumbers(int* array);
 
+int maxInt(std::vector<int> vector);
+
+void radixSort(std::vector<int>& vector);
+
+void countSort(std::vector<int>& vector, int place);
+
+
 //You might want to remove the console ouput of all numbers in each list
 //if testing with large numbers of generated integers
 
@@ -31,7 +38,7 @@ int main()
 
     generateRandomNumbers(a);
     for(int i : a){
-        std::cout << a[i] << std::endl;//outputs unsorted collection of integers as generated
+        std::cout << i << std::endl;//outputs unsorted collection of integers as generated
     }
 
     std::cout << std::endl;
@@ -45,6 +52,11 @@ int main()
     bubbleSort(a, SIZE);
     //secondSort(b);
     for (int i : a)//comment this block to reduce output
+        std::cout << i << std::endl;
+
+    radixSort(b);
+
+    for (int i : b)
         std::cout << i << std::endl;
 
     list.print();//comment this to reduce output
@@ -85,4 +97,46 @@ void generateRandomNumbers(int* array) {
     {
         array[i] = rand() % (SIZE * 10);
     }
+}
+
+int maxInt(std::vector<int> vector) {
+    int max = vector.at(0);
+    for (int i : vector) {
+        if (i > max) {
+            max = i;
+        }
+    }
+    return max;
+}
+void radixSort(std::vector<int>& vector) {
+    int max = maxInt(vector);
+    for (int place = 1; max / place > 0; place *= 10) {
+        countSort(vector, place);
+    }
+}
+
+void countSort(std::vector<int>& vector, int place)
+{
+    std::vector<int> output; // output array 
+    output.resize(vector.size());
+    int count[10] = { 0 };
+
+    // Store count of occurrences in count[] 
+    for (int i = 0; i < vector.size(); i++)
+        count[(vector.at(i) / place) % 10]++;
+
+    // Change count[i] so that count[i] now contains actual 
+    //  position of this digit in output[] 
+    for (int i = 1; i < 10; i++)
+        count[i] += count[i - 1];
+
+    // Build the output array 
+    for (int i = vector.size() - 1; i >= 0; i--)
+    {
+        output.at(count[(vector.at(i) / place) % 10] - 1) = vector.at(i);
+        count[(vector.at(i) / place) % 10]--;
+    }
+    vector.clear();
+    for (int i : output)
+        vector.push_back(i);
 }
