@@ -41,7 +41,3 @@ The time complexity for each individual Counting Sort as part of a Radix sort is
 * $\Theta(2n + 10) \sim \Theta(n)$
 
 Like Radix Sort, counting sort can be of limited utility.  There has to be a relatively small, fixed number of possible values with a clearly defined comparison; it works as part of Radix Sort because there are only 10 possible values at each iteration when dealing with base 10 numbers.  It also does not sort in place, and requires additional memory to hold the sorted data at the same time as the unsorted data.
-
-## Comparison
-
-Putting the differences in plain English, each iteration of the Linear Search eliminates 1 possible answer; each iteration of Binary Search eliminates $\frac{n}{2}$ possible answers.  Using 100 items as an arbitrary example,  in an _average_ case a Linear Search will take $ \frac{n}{2} = 50$ iterations; in the _worst_ case, a Binary Search will take $log_2(100) \approx 7$.  Both have the possibility of finding the answer on the first round, but over a larger sample set the time taken by a Linear Search will grow dramatically faster than a Binary Search.
