@@ -12,36 +12,34 @@ Date: 09/12/2020
 #include <vector>
 #include "LinkedList.h"
 
+const int SIZE = 100;
 
 void swap(int& first, int& second);
 
-int* bubbleSort(int* array, int size);
+void bubbleSort(int* array, int size);
+
+void generateRandomNumbers(int* array);
 
 //You might want to remove the console ouput of all numbers in each list
 //if testing with large numbers of generated integers
 
 int main()
 {
-    const int SIZE = 1000;
     int a[SIZE];
     std::vector<int> b;
-    int i;
     LinkedList list;
 
-    srand(time(NULL));
-
-    for (i = 0; i < SIZE; i++)
-    {
-        a[i] = rand() % (SIZE * 10);
-        std::cout << a[i] << std::endl;//comment this line to reduce output
+    generateRandomNumbers(a);
+    for(int i : a){
+        std::cout << a[i] << std::endl;//outputs unsorted collection of integers as generated
     }
 
     std::cout << std::endl;
 
     int key = 0;
     for (int i : a) {
-        b.push_back(i);
-        list.newNode(++key, i);
+        b.push_back(i);//populates vector for other sort
+        list.newNode(++key, i);//insertion sorted, see LinkedList.cpp
     }
 
     bubbleSort(a, SIZE);
@@ -64,7 +62,7 @@ void swap(int& first, int& second) {
     second = temp;
 }
 
-int* bubbleSort(int* array, int size) {
+void bubbleSort(int* array, int size) {
     bool changes;//a boolean to track changes for optimization of bubble sort
 
     for (int j = 0; j < size; j++) {
@@ -79,5 +77,12 @@ int* bubbleSort(int* array, int size) {
             break;
         }
     }
-    return array;
+}
+
+void generateRandomNumbers(int* array) {
+    srand(time(NULL));
+    for (int i = 0; i < SIZE; i++)
+    {
+        array[i] = rand() % (SIZE * 10);
+    }
 }
