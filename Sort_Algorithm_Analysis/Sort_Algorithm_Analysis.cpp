@@ -28,7 +28,7 @@ int maxInt(std::vector<int> vector);
 
 void radixSort(std::vector<int>& vector);
 
-std::vector<int> countSort(std::vector<int>& vector, int place);
+std::vector<int> countSort(std::vector<int> vector, int place);
 
 
 //You might want to remove the console ouput of all numbers in each list
@@ -141,7 +141,7 @@ void radixSort(std::vector<int>& input) {
     //f(n) = c * n, or O(n) time complexity.
 }
 
-std::vector<int> countSort(std::vector<int>& input, int place)
+std::vector<int> countSort(std::vector<int> input, int place)
 {
     /*Sorts a vector of integers into ascending order by the value in a given place(1, 10, etc)
     Uses a hashtable of value counts and an offset by preceding values to determine indicies of placement.
@@ -160,7 +160,7 @@ std::vector<int> countSort(std::vector<int>& input, int place)
     for (int i = 1; i < 10; i++) {
         digitHashTable[i] += digitHashTable[i - 1];
     }
-    //using the counts in conjunction with the correct place digit, rearrange the values in vector
+    //using the counts in conjunction with the correct place digit, rearrange the values in input
     //into the correct order in output
     for (int i = input.size() - 1; i >= 0; i--){
         output.at(digitHashTable[(input.at(i) / place) % 10] - 1) = input.at(i);
