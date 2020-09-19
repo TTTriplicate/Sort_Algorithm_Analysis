@@ -16,6 +16,10 @@ const int SIZE = 100;
 
 void swap(int& first, int& second);
 
+void printVector(std::vector<int> vector);
+
+void printArray(int* array);
+
 void bubbleSort(int* array, int size);
 
 void generateRandomNumbers(int* array);
@@ -37,11 +41,9 @@ int main()
     LinkedList list;
 
     generateRandomNumbers(a);
-    for(int i : a){
-        std::cout << i << std::endl;//outputs unsorted collection of integers as generated
-    }
 
-    std::cout << std::endl;
+    std::cout << "The numbers as generated:" << std::endl;
+    printArray(a);
 
     int key = 0;
     for (int i : a) {
@@ -49,20 +51,17 @@ int main()
         list.newNode(++key, i);//insertion sorted, see LinkedList.cpp
     }
 
+    std::cout << "Bubble Sort:" << std::endl;
     bubbleSort(a, SIZE);
     //secondSort(b);
-    for (int i : a)//comment this block to reduce output
-        std::cout << i << std::endl;
-
+    printArray(a);//comment this block to reduce output
+ 
+    std::cout << "Radix Sort:" << std::endl;
+    printVector(b);
+    
     radixSort(b);
 
-    for (int i : b)
-        std::cout << i << std::endl;
-
     list.print();//comment this to reduce output
-
-
-    int input = 0;//catches the user's input
 
     return(0);
 }
@@ -72,6 +71,23 @@ void swap(int& first, int& second) {
     int temp = first;
     first = second;
     second = temp;
+}
+
+void printVector(std::vector<int> vector) {
+    //prints the contents of a vector<int> in a tab-delimited line
+    //Thought it looked good for comparing sort at each iteration
+    for (int i : vector) {
+        std::cout << i << "\t";
+    }
+    std::cout << std::endl << std::endl;
+}
+
+void printArray(int* array) {
+    //prints the contents of an array as a single tab-deliniated line
+    for (int i = 0; i < SIZE; i++) {
+        std::cout << array[i] << "\t";
+    }
+    std::cout << std::endl << std::endl;
 }
 
 void bubbleSort(int* array, int size) {
@@ -92,6 +108,7 @@ void bubbleSort(int* array, int size) {
 }
 
 void generateRandomNumbers(int* array) {
+    //Generates SIZE random numbers between 0 and SIZE, and puts them in an array
     srand(time(NULL));
     for (int i = 0; i < SIZE; i++)
     {
@@ -100,6 +117,7 @@ void generateRandomNumbers(int* array) {
 }
 
 int maxInt(std::vector<int> vector) {
+    //returns the maximum integer from the vector argument
     int max = vector.at(0);
     for (int i : vector) {
         if (i > max) {
@@ -108,12 +126,14 @@ int maxInt(std::vector<int> vector) {
     }
     return max;
 }
-void radixSort(std::vector<int>& vector) {
+void radixSort(std::vector<int>& input) {
     /*Sorts a vector of integers by doing a count sort on each 
     place(1, 10, etc) until there are no numbers with the significant figure*/
-    int max = maxInt(vector);
+    int max = maxInt(input);
     for (int place = 1; max / place > 0; place *= 10) {
-        vector = countSort(vector, place);
+        input = countSort(input, place);
+        std::cout << "After Count Sort on the " << place << "s place:" << std::endl;
+        printVector(input);
     }
     //This sort runs log_10(max(n)) times
     //each sub-section runs one full iteration across the vector
@@ -121,30 +141,30 @@ void radixSort(std::vector<int>& vector) {
     //f(n) = c * n, or O(n) time complexity.
 }
 
-std::vector<int> countSort(std::vector<int>& vector, int place)
+std::vector<int> countSort(std::vector<int>& input, int place)
 {
     /*Sorts a vector of integers into ascending order by the value in a given place(1, 10, etc)
-    Uses a hashtable of value counts and an offset by preceding values to determine indicies of placement
+    Uses a hashtable of value counts and an offset by preceding values to determine indicies of placement.
     integers with matching significant figures will retain original order*/
     std::vector<int> output;
-    output.resize(vector.size());
-    int count[10] = { 0 };
+    output.resize(input.size());
+    int digitHashTable[10] = { 0 };
 
-    //uses count as a hashtable of counts of which digit(1, 2, ..., 9) is in the nth place(1, 10, etc)
-    for (int i = 0; i < vector.size(); i++) {
-        count[(vector.at(i) / place) % 10]++;
+    //generates a hashtable of counts of which digit(1, 2, ..., 9) is in the nth place(1, 10, etc)
+    for (int i = 0; i < input.size(); i++) {
+        digitHashTable[(input.at(i) / place) % 10]++;
     }
     //each set will be inserted starting at the position dictated by counts of
     //all numbers with smaller first digits
-    //the count vector is reused for this
+    //the hashtable is modified in place for this 
     for (int i = 1; i < 10; i++) {
-        count[i] += count[i - 1];
+        digitHashTable[i] += digitHashTable[i - 1];
     }
     //using the counts in conjunction with the correct place digit, rearrange the values in vector
     //into the correct order in output
-    for (int i = vector.size() - 1; i >= 0; i--){
-        output.at(count[(vector.at(i) / place) % 10] - 1) = vector.at(i);
-        count[(vector.at(i) / place) % 10]--;
+    for (int i = input.size() - 1; i >= 0; i--){
+        output.at(digitHashTable[(input.at(i) / place) % 10] - 1) = input.at(i);
+        digitHashTable[(input.at(i) / place) % 10]--;
     }
     return output;
 }
