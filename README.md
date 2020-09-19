@@ -63,9 +63,9 @@ void radixSort(std::vector<int>& vector) {
 
 Radix sort does this by using a Counting Sort subroutine to sort the dataset by each position in the string, sorting by a larger power of 10 each time until the numbers have been sorted by all available places.  See my writeup of Counting Sort below for that algorithmic analysis, but suffice to say that the counting sort has time complexity of $O(n)$, and is run no more than 10 times to sort a dataset containing only unsigned standard-length integers.
 
-* $O(n\times log_{10}(MAX\_INT)) \approx O(n\times10) \sim O(n)$
-* $\Omega(n \times log_{10}(9)) \approx \Omega(n)$
-* $\Theta(n\times log_{10}(log_2(2147483647))) \approx \Theta(n \times 5) \sim \Theta(n)$ 
+* $O(n\times \lceil log_{10}(MAX\_INT)\rceil) \sim O(n\times10) \sim O(n)$
+* $\Omega(n \times \lceil log_{10}(9)\rceil) \sim \Omega(n)$
+* $\Theta(n\times \lceil log_{10}(\frac{MAX\_INT}{10000})\rceil) \approx \Theta(n \times 5) \sim \Theta(n)$ 
 
 Radix Sort has limitations; it can only be used for integers or data that can be represented as integers, and is best used for relatively short integers.  If the number of places in each integer is equal to or greater than $n$, the time can actually approach $O(n^2)$.  It also does not sort in place, the way that some other sorting algorithms do; the items are copied from one data structure into another in sorted order, using more system memory in the process.
 
@@ -74,29 +74,30 @@ Radix Sort has limitations; it can only be used for integers or data that can be
 Counting Sort is what I used as a subroutine to accomplish my Radix Sort.  Counting Sort is a non-comparative sort.  Where Insertion Sort and many others compare elements and swap them, there is no need to do that in a counting sort.  A hashtable is made of the occurrences of the possible values of data to sort.  Each count is added to the next to allow the algorithm to mathematically place each item in the correct range of indices when populating the sorted data structure.
 
 ```cpp
-std::vector<int> countSort(std::vector<int>& vector, int place)
+std::vector<int> countSort(std::vector<int>& input, int place)
 {
     /*Sorts a vector of integers into ascending order by the value in a given place(1, 10, etc)
-    Uses a hashtable of value counts and an offset by preceding values to determine indicies of 		placement integers with matching significant figures will retain original order*/
+    Uses a hashtable of value counts and an offset by preceding values to determine indicies of 		placement.
+    integers with matching significant figures will retain original order*/
     std::vector<int> output;
-    output.resize(vector.size());
-    int count[10] = { 0 };
+    output.resize(input.size());
+    int digitHashTable[10] = { 0 };
 
-    //uses count as a hashtable of counts of which digit(1, 2, ..., 9) is in the nth place(1, 10, etc)
-    for (int i = 0; i < vector.size(); i++) {
-        count[(vector.at(i) / place) % 10]++;
+    //generates a hashtable of counts of which digit(1, 2, ..., 9) is in the nth place(1, 10, etc)
+    for (int i = 0; i < input.size(); i++) {
+        digitHashTable[(input.at(i) / place) % 10]++;
     }
     //each set will be inserted starting at the position dictated by counts of
     //all numbers with smaller first digits
-    //the count vector is reused for this
+    //the hashtable is modified in place for this 
     for (int i = 1; i < 10; i++) {
-        count[i] += count[i - 1];
+        digitHashTable[i] += digitHashTable[i - 1];
     }
-    //using the counts in conjunction with the correct place digit, copy the values from vector
+    //using the counts in conjunction with the correct place digit, rearrange the values in input
     //into the correct order in output
-    for (int i = vector.size() - 1; i >= 0; i--){
-        output.at(count[(vector.at(i) / place) % 10] - 1) = vector.at(i);
-        count[(vector.at(i) / place) % 10]--;
+    for (int i = input.size() - 1; i >= 0; i--){
+        output.at(digitHashTable[(input.at(i) / place) % 10] - 1) = input.at(i);
+        digitHashTable[(input.at(i) / place) % 10]--;
     }
     return output;
 }

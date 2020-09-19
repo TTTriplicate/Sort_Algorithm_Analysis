@@ -15,24 +15,13 @@ Date: 09/12/2020
 const int SIZE = 100;
 
 void swap(int& first, int& second);
-
 void printVector(std::vector<int> vector);
-
 void printArray(int* array);
-
 void bubbleSort(int* array, int size);
-
 void generateRandomNumbers(int* array);
-
 int maxInt(std::vector<int> vector);
-
 void radixSort(std::vector<int>& vector);
-
 std::vector<int> countSort(std::vector<int> vector, int place);
-
-
-//You might want to remove the console ouput of all numbers in each list
-//if testing with large numbers of generated integers
 
 int main()
 {
@@ -47,21 +36,25 @@ int main()
 
     int key = 0;
     for (int i : a) {
-        b.push_back(i);//populates vector for other sort
+        b.push_back(i);//populates vector for radix/count sort
         list.newNode(++key, i);//insertion sorted, see LinkedList.cpp
     }
 
     std::cout << "Bubble Sort:" << std::endl;
     bubbleSort(a, SIZE);
     //secondSort(b);
-    printArray(a);//comment this block to reduce output
+    printArray(a);
  
-    std::cout << "Radix Sort:" << std::endl;
+    std::cout << "Before Radix Sort:" << std::endl;
     printVector(b);
     
     radixSort(b);
 
-    list.print();//comment this to reduce output
+    std::cout << "After Radix Sort:" << std::endl;
+    printVector(b);
+
+    std::cout << "After Insertion Sort; IDs represent original order of insertion:" << std::endl;
+    list.print();
 
     return(0);
 }
